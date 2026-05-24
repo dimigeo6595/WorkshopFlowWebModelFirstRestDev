@@ -1,0 +1,6 @@
+@WorkshopFlow_HostAddress = http://localhost:5167
+
+GET {{WorkshopFlow_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
