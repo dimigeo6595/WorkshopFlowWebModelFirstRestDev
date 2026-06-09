@@ -2,7 +2,7 @@
 using WorkshopFlow.Data;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using WorkshopFlow.Core.Entities;
+using WorkshopFlow.Models;
 using WorkshopFlow.Repositories;
 
 namespace WorkshopFlow.Repositories

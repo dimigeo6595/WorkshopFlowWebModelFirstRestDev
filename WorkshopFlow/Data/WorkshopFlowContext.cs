@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkshopFlow.Core.Entities;
+using WorkshopFlow.Models;
 
 namespace WorkshopFlow.Data;
 

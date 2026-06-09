@@ -1,7 +1,7 @@
 ﻿
 using System.Linq.Expressions;
 using WorkshopFlow.Core;
-using WorkshopFlow.Core.Entities;
+using WorkshopFlow.Models;
 using WorkshopFlow.Repositories;
 
 namespace WorkshopFlow.Repositories

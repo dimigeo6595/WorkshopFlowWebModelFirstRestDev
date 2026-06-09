@@ -1,5 +1,5 @@
 ﻿using WorkshopFlow.Core;
-using WorkshopFlow.Core.Entities;
+using WorkshopFlow.Models;
 using WorkshopFlow.Core.Filters;
 using WorkshopFlow.DTO;
 

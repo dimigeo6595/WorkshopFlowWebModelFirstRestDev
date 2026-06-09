@@ -1,4 +1,4 @@
-﻿namespace WorkshopFlow.Core.Entities
+namespace WorkshopFlow.Models
 {
     public abstract class BaseEntity
     {

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WorkshopFlow.Core.Entities;
+using WorkshopFlow.Models;
 using WorkshopFlow.DTO;
 
 

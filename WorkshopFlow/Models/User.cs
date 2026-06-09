@@ -1,6 +1,6 @@
-﻿using WorkshopFlow.Core.Entities;
+using WorkshopFlow.Models;
 
-namespace WorkshopFlow.Core.Entities;
+namespace WorkshopFlow.Models;
 
 public class User : BaseEntity
 {

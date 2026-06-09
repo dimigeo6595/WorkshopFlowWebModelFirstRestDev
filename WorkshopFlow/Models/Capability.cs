@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace WorkshopFlow.Core.Entities;
+namespace WorkshopFlow.Models;
 
 public class Capability
 {

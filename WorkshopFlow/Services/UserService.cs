@@ -10,7 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
-using WorkshopFlow.Core.Entities;
+using WorkshopFlow.Models;
 
 namespace WorkshopFlow.Services
 {  
