@@ -1,16 +1,19 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using WorkshopFlow.Configuration;
-using WorkshopFlow.Data;
-using WorkshopFlow.Repositories;
-using WorkshopFlow.Security;
-using WorkshopFlow.Services;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
+using WorkshopFlow.Configuration;
+using WorkshopFlow.Data;
+using WorkshopFlow.Helpers;
+using WorkshopFlow.Repositories;
+using WorkshopFlow.Security;
+using WorkshopFlow.Services;
 namespace WorkshopFlow
 {
     public class Program
@@ -18,6 +21,11 @@ namespace WorkshopFlow
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog((hostingContext, configuration) =>
+            {
+                configuration.ReadFrom.Configuration(hostingContext.Configuration);
+            });
 
             var connString = builder.Configuration.GetConnectionString("DevConnection");
 
@@ -60,8 +68,44 @@ namespace WorkshopFlow
             });
 
 
-            builder.Services.AddControllers();
-           
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowClient", policy =>
+                policy.WithOrigins(builder.Configuration["Cors:Origin"]!)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
+            builder.Services.AddControllers().AddJsonOptions( options =>
+            {
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
+
+            builder.Services.AddEndpointsApiExplorer();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Workshop Flow", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+
+                // options.SupportNonNullableReferenceTypes(); // default true > .NET 6
+                options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme,
+                    new OpenApiSecurityScheme
+                    {
+                        Description = "JWT Authorization header using the Bearer scheme.",
+                        Name = "Authorization",
+                        In = ParameterLocation.Header,
+                        Type = SecuritySchemeType.Http,
+                        Scheme = JwtBearerDefaults.AuthenticationScheme,
+                        BearerFormat = "JWT"
+                    });
+                options.OperationFilter<AuthorizeOperationFilter>();
+            });
+
 
             var app = builder.Build();
 
@@ -69,6 +113,10 @@ namespace WorkshopFlow
             
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowClient");
+
+
 
             app.UseAuthentication();
             app.UseAuthorization();
