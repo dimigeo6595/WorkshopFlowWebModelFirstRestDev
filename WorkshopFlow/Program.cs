@@ -107,20 +107,33 @@ namespace WorkshopFlow
             });
 
 
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+            builder.Services.AddProblemDetails();
+
+
+
+
+
             var app = builder.Build();
 
-            
-            
 
+
+
+            
+            app.UseExceptionHandler();
+
+            if(app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+            
             app.UseHttpsRedirection();
 
             app.UseCors("AllowClient");
-
-
-
             app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
