@@ -119,6 +119,13 @@ namespace WorkshopFlow.Services
                 new Claim(ClaimTypes.Role, user.Role.Name)
             };
 
+            // Προσθέτουμε τα capabilities του role ως claims
+            // Έτσι το API ξέρει τι επιτρέπεται σε κάθε request χωρίς να χρειάζεται νέο DB call
+            foreach (var capability in user.Role.Capabilities)
+            {
+                claimsInfo.Add(new Claim("capability", capability.Name));
+            }
+
             var jwtSecurityToken = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
@@ -127,7 +134,6 @@ namespace WorkshopFlow.Services
                 signingCredentials: signingCredentials
             );
 
-            // Serialize the token to a string
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
     }
