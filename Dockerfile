@@ -14,22 +14,22 @@ WORKDIR /src
 # slnx → δομή solution, csproj → NuGet dependencies
 # Το dotnet restore διαβάζει τα .csproj, βρίσκει τα NuGet packages που χρειάζεται, 
 # τα κατεβάζει από το nuget.org, και τα αποθηκεύει μέσα στο container.
-# To 2o SchoolApp/ δημιουργεί τον φάκελο αν δεν υπάρχει. Προσοχή το / στο τέλος
-# εννοεί φάκελο. Επίσης το πρώτο *.slnx και τo SchoolApp/*.csproj αναφέρονται
+# To 2o WorkshopFlow/ δημιουργεί τον φάκελο αν δεν υπάρχει. Προσοχή το / στο τέλος
+# εννοεί φάκελο. Επίσης το πρώτο *.slnx και τo WorkshopFlow/*.csproj αναφέρονται
 # έμμεσα στον τρέχον φάκελο που είναι το Dockerfile, δηλαδή στον φάκελο του Solution
 # COPY *.slnx .
-COPY SchoolApp/*.csproj SchoolApp/
-RUN dotnet restore SchoolApp/SchoolApp.csproj
+COPY WorkshopFlow/*.csproj WorkshopFlow/
+RUN dotnet restore WorkshopFlow/WorkshopFlow.csproj
 
 # Τώρα αντίγραψε τον υπόλοιπο κώδικα (.cs, wwwroot, appsettings κ.λπ.)
-# Αντιγράφει τα πάντα από τον φάκελο ScoolApp του host μέσα στον φάκελο SchoolApp/ του container
+# Αντιγράφει τα πάντα από τον φάκελο WorkshopFlow του host μέσα στον φάκελο WorkshopFlow/ του container
 # Ξεχωριστά από τα csproj για να μην σπάμε το cache του restore - αν αλλάξει ένα .cs μην ξανακάνει restore
-COPY SchoolApp/ SchoolApp/
+COPY WorkshopFlow/ WorkshopFlow/
 
 # Μπες στο project folder και κάνε publish
 # compile σε Release mode, output στο /app
 # -c Release → optimized build, όχι Debug
-WORKDIR /src/SchoolApp
+WORKDIR /src/WorkshopFlow
 RUN dotnet publish -c Release -o /app
 
 # ============================================================
@@ -47,8 +47,8 @@ COPY --from=build /app .
 # στο .NET 8+ ο Kestrel ακούει σε port 8080 by default. Μέσα σε Docker container: Δεν υπάρχει launchSettings — αγνοείται εντελώς
 EXPOSE 8080
 
-# Όρισε τι τρέχει ο container: dotnet SchoolApp.dll
-# Η μορφή με τα brackets ["dotnet", "SchoolApp.dll"] λέγεται exec form — 
+# Όρισε τι τρέχει ο container: dotnet WorkshopFlow.dll
+# Η μορφή με τα brackets ["dotnet", "WorkshopFlow.dll"] λέγεται exec form — 
 # κάθε στοιχείο του array είναι ξεχωριστό argument. 
-# Τρέχει: dotnet SchoolApp.dll — απευθείας ως process
-ENTRYPOINT ["dotnet", "SchoolApp.dll"]
+# Τρέχει: dotnet WorkshopFlow.dll — απευθείας ως process
+ENTRYPOINT ["dotnet", "WorkshopFlow.dll"]
