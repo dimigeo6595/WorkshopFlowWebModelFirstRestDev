@@ -111,7 +111,10 @@ namespace WorkshopFlow
 
             builder.Services.AddProblemDetails();
 
-
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("VIEW_USERS", p => p.RequireClaim("capability", "VIEW_USERS"));
+            });
 
 
 
