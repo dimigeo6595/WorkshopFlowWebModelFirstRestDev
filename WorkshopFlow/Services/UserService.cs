@@ -105,6 +105,80 @@ namespace WorkshopFlow.Services
             return user; 
         }
 
+        public async Task<UserReadOnlyDTO> InsertUserAsync(UserInsertDTO dto)
+        {
+            var existingUser = await _unitOfWork.UserRepository.GetUserByUsernameAsync(dto.Username);
+            if (existingUser != null)
+            {
+                throw new EntityAlreadyExistsException("User", $"User with username {dto.Username} already exists");
+            }
+
+            var user = _mapper.Map<User>(dto);
+            user.Password = _encryptionUtil.Encrypt(dto.Password);
+
+            await _unitOfWork.UserRepository.AddAsync(user);
+            await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("User {Username} created successfully", user.Username);
+            return _mapper.Map<UserReadOnlyDTO>(user);
+        }
+
+        public async Task<UserReadOnlyDTO> UpdateUserAsync(int id, UserUpdateDTO dto)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id)
+                ?? throw new EntityNotFoundException("User", $"User with id {id} not found");
+
+            _mapper.Map(dto, user);
+            user.ModifiedAt = DateTime.UtcNow;
+
+            await _unitOfWork.UserRepository.UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("User with id {Id} updated successfully", id);
+            return _mapper.Map<UserReadOnlyDTO>(user);
+        }
+
+        public async Task PatchUserAsync(int id, UserPatchDTO dto)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id)
+                ?? throw new EntityNotFoundException("User", $"User with id {id} not found");
+
+            if (!string.IsNullOrEmpty(dto.Email))
+            {
+                user.Email = dto.Email;
+            }
+
+            if (!string.IsNullOrEmpty(dto.NewPassword))
+            {
+                if (!_encryptionUtil.IsValidPassword(dto.CurrentPassword!, user.Password))
+                {
+                    throw new EntityNotAuthorizedException("User", "Current password is incorrect");
+                }
+                user.Password = _encryptionUtil.Encrypt(dto.NewPassword);
+            }
+
+            user.ModifiedAt = DateTime.UtcNow;
+            await _unitOfWork.UserRepository.UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("User with id {Id} patched successfully", id);
+        }
+
+        public async Task DeleteUserAsync(int id)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(id)
+                ?? throw new EntityNotFoundException("User", $"User with id {id} not found");
+
+            user.IsDeleted = true;
+            user.DeletedAt = DateTime.UtcNow;
+            user.ModifiedAt = DateTime.UtcNow;
+
+            await _unitOfWork.UserRepository.UpdateAsync(user);
+            await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("User with id {Id} soft deleted", id);
+        }
+
         public string CreateUserToken(User user)
         {
             var secretKey = _configuration["Jwt:Secret"]!;

@@ -11,7 +11,13 @@ namespace WorkshopFlow.Configuration
         public MapperConfig()
         {
             CreateMap<User, UserReadOnlyDTO>()
-                .ForMember(dest => dest.UserRole, opt => opt.MapFrom(src => src.Role.Name));          
+                .ForMember(dest => dest.UserRole, opt => opt.MapFrom(src => src.Role.Name));
+
+            CreateMap<UserInsertDTO, User>();
+            CreateMap<UserUpdateDTO, User>();
+
         }
+
+
     }
 }
