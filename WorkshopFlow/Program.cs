@@ -32,7 +32,8 @@ namespace WorkshopFlow
             builder.Services.AddDbContext<WorkshopFlowContext>(options =>
                 options.UseSqlServer(connString));
 
-            builder.Services.AddScoped<IUserService, UserService>();            
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IItemService, ItemService>();
             builder.Services.AddScoped<IApplicationService, ApplicationService>();
             builder.Services.AddSingleton<IEncryptionUtil, EncryptionUtil>();
 
@@ -110,6 +111,8 @@ namespace WorkshopFlow
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
             builder.Services.AddProblemDetails();
+
+
 
             builder.Services.AddAuthorization(options =>
             {

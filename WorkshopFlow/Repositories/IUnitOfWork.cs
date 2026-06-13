@@ -5,7 +5,8 @@ namespace WorkshopFlow.Repositories
     public interface IUnitOfWork
     {
         IUserRepository UserRepository { get; }
-        
+        IItemRepository ItemRepository { get; }
+
         Task<bool> SaveAsync();
     }
 }
