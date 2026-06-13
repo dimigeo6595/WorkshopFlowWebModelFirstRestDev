@@ -129,5 +129,81 @@ namespace WorkshopFlow.Controllers
             throw new EntityForbiddenException("User",
                 "You do not have permission to view this user.");
         }
+
+        /// <summary>
+        /// Creates a new user. Admin only.
+        /// </summary>
+        /// <response code="201">Returns the created user.</response>
+        /// <response code="400">If the request is invalid.</response>
+        /// <response code="409">If a user with the same username already exists.</response>
+        [HttpPost]
+        [Authorize(Policy = "INSERT_USER")]
+        [ProducesResponseType(typeof(UserReadOnlyDTO), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<ActionResult<UserReadOnlyDTO>> CreateUser([FromBody] UserInsertDTO dto)
+        {
+            var createdUser = await _applicationService.UserService.InsertUserAsync(dto);
+
+            return CreatedAtAction(
+                actionName: nameof(GetUserById),
+                routeValues: new { id = createdUser.Id },
+                value: createdUser);
+        }
+
+        /// <summary>
+        /// Updates a user. Admin only.
+        /// </summary>
+        /// <response code="200">Returns the updated user.</response>
+        /// <response code="404">If no user exists with the given ID.</response>
+        [HttpPut("{id:int}")]
+        [Authorize(Policy = "EDIT_USER")]
+        [ProducesResponseType(typeof(UserReadOnlyDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<UserReadOnlyDTO>> UpdateUser(int id, [FromBody] UserUpdateDTO dto)
+        {
+            var updatedUser = await _applicationService.UserService.UpdateUserAsync(id, dto);
+            return Ok(updatedUser);
+        }
+
+        /// <summary>
+        /// Partially updates own profile (email, password).
+        /// </summary>
+        /// <response code="204">Update successful.</response>
+        /// <response code="401">If current password is wrong.</response>
+        /// <response code="404">If no user exists with the given ID.</response>
+        [HttpPatch("{id:int}")]
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> PatchUser(int id, [FromBody] UserPatchDTO dto)
+        {
+            // Μόνο ο ίδιος ο χρήστης μπορεί να κάνει patch το profile του
+            var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            if (currentUserId != id)
+            {
+                throw new EntityForbiddenException("User",
+                    "You can only update your own profile.");
+            }
+
+            await _applicationService.UserService.PatchUserAsync(id, dto);
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Soft deletes a user. Admin only.
+        /// </summary>
+        /// <response code="204">Delete successful.</response>
+        /// <response code="404">If no user exists with the given ID.</response>
+        [HttpDelete("{id:int}")]
+        [Authorize(Policy = "DELETE_USER")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            await _applicationService.UserService.DeleteUserAsync(id);
+            return NoContent();
+        }
     }
 }

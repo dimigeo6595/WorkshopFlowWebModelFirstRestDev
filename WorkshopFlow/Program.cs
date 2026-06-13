@@ -113,8 +113,44 @@ namespace WorkshopFlow
 
             builder.Services.AddAuthorization(options =>
             {
+                // User policies
+                options.AddPolicy("VIEW_USER", p => p.RequireClaim("capability", "VIEW_USER"));
                 options.AddPolicy("VIEW_USERS", p => p.RequireClaim("capability", "VIEW_USERS"));
+                options.AddPolicy("INSERT_USER", p => p.RequireClaim("capability", "INSERT_USER"));
+                options.AddPolicy("EDIT_USER", p => p.RequireClaim("capability", "EDIT_USER"));
+                options.AddPolicy("DELETE_USER", p => p.RequireClaim("capability", "DELETE_USER"));
+
+                // Item policies
+                options.AddPolicy("VIEW_ITEMS", p => p.RequireClaim("capability", "VIEW_ITEMS"));
+                options.AddPolicy("INSERT_ITEM", p => p.RequireClaim("capability", "INSERT_ITEM"));
+                options.AddPolicy("EDIT_ITEM", p => p.RequireClaim("capability", "EDIT_ITEM"));
+                options.AddPolicy("DELETE_ITEM", p => p.RequireClaim("capability", "DELETE_ITEM"));
+
+                // BOM policies
+                options.AddPolicy("VIEW_BOM", p => p.RequireClaim("capability", "VIEW_BOM"));
+                options.AddPolicy("EDIT_BOM", p => p.RequireClaim("capability", "EDIT_BOM"));
+
+                // Routing policies
+                options.AddPolicy("VIEW_ROUTING", p => p.RequireClaim("capability", "VIEW_ROUTING"));
+                options.AddPolicy("EDIT_ROUTING", p => p.RequireClaim("capability", "EDIT_ROUTING"));
+
+                // Machine policies
+                options.AddPolicy("VIEW_MACHINES", p => p.RequireClaim("capability", "VIEW_MACHINES"));
+                options.AddPolicy("EDIT_MACHINES", p => p.RequireClaim("capability", "EDIT_MACHINES"));
+
+                // Work Order policies
+                options.AddPolicy("VIEW_WORK_ORDERS", p => p.RequireClaim("capability", "VIEW_WORK_ORDERS"));
+                options.AddPolicy("INSERT_WORK_ORDER", p => p.RequireClaim("capability", "INSERT_WORK_ORDER"));
+                options.AddPolicy("EDIT_WORK_ORDER", p => p.RequireClaim("capability", "EDIT_WORK_ORDER"));
+                options.AddPolicy("START_WORK_ORDER", p => p.RequireClaim("capability", "START_WORK_ORDER"));
+                options.AddPolicy("COMPLETE_WORK_ORDER", p => p.RequireClaim("capability", "COMPLETE_WORK_ORDER"));
+                options.AddPolicy("ASSIGN_WORK_ORDER", p => p.RequireClaim("capability", "ASSIGN_WORK_ORDER"));
+
+                // Inventory policies
+                options.AddPolicy("VIEW_INVENTORY", p => p.RequireClaim("capability", "VIEW_INVENTORY"));
+                options.AddPolicy("ADJUST_INVENTORY", p => p.RequireClaim("capability", "ADJUST_INVENTORY"));
             });
+
 
 
 
