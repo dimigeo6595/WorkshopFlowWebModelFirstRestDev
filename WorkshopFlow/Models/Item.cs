@@ -23,5 +23,9 @@
         // Navigation properties
         public UnitOfMeasure UnitOfMeasure { get; set; } = null!;
         public UnitOfMeasure? WeightUoM { get; set; }
+
+        // BOM navigation properties
+        public ICollection<BomLine> ProducedBomLines { get; set; } = new HashSet<BomLine>();  // αυτό το item παράγεται από αυτές τις γραμμές
+        public ICollection<BomLine> UsedInBomLines { get; set; } = new HashSet<BomLine>();
     }
 }

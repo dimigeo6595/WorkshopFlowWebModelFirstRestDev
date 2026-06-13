@@ -12,14 +12,11 @@ public class WorkshopFlowContext : DbContext
     }
 
     public DbSet<Capability> Capabilities { get; set; }
-
-
     public DbSet<Role> Roles { get; set; }
-
     public DbSet<User> Users { get; set; }
-
     public DbSet<UnitOfMeasure> UnitOfMeasures { get; set; }
     public DbSet<Item> Items { get; set; }
+    public DbSet<BomLine> BomLines { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -107,6 +104,40 @@ public class WorkshopFlowContext : DbContext
             entity.HasIndex(e => e.ItemCode, "UQ_Items_ItemCode").IsUnique();
             entity.HasIndex(e => e.UnitOfMeasureId, "IX_Items_UnitOfMeasureId");
             entity.HasIndex(e => e.ItemType, "IX_Items_ItemType");
+        });
+
+        modelBuilder.Entity<BomLine>(entity =>
+        {
+            entity.Property(e => e.Quantity).HasPrecision(18, 4);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+
+            // FK προς Item (το παραγόμενο item)
+            entity.HasOne(d => d.ProducedItem)
+                .WithMany(p => p.ProducedBomLines)
+                .HasForeignKey(d => d.ProducedItemId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_BomLines_ProducedItemId");
+
+            // FK προς Item (το component)
+            entity.HasOne(d => d.ComponentItem)
+                .WithMany(p => p.UsedInBomLines)
+                .HasForeignKey(d => d.ComponentItemId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_BomLines_ComponentItemId");
+
+            // FK προς UnitOfMeasure
+            entity.HasOne(d => d.UnitOfMeasure)
+                .WithMany()
+                .HasForeignKey(d => d.UnitOfMeasureId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_BomLines_UnitOfMeasureId");
+
+            // Επιχειρησιακός κανόνας: ένα component εμφανίζεται μία φορά ανά BOM
+            entity.HasIndex(e => new { e.ProducedItemId, e.ComponentItemId },
+                "UQ_BomLines_ProducedItem_ComponentItem").IsUnique();
+
+            entity.HasIndex(e => e.ProducedItemId, "IX_BomLines_ProducedItemId");
+            entity.HasIndex(e => e.ComponentItemId, "IX_BomLines_ComponentItemId");
         });
     }
 }
