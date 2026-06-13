@@ -12,17 +12,28 @@ namespace WorkshopFlow.Repositories
         public UserRepository(WorkshopFlowContext context) : base(context)
         {
         }
+
+        public override async Task<User?> GetByIdAsync(int id) =>
+        await _context.Users
+            .Include(u => u.Role)
+            .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+
+
         public async Task<User?> GetUserByUsernameAsync(string username) =>
             await _context.Users
                 .Include(u => u.Role)
                     .ThenInclude(r => r.Capabilities)
-                .FirstOrDefaultAsync(u => u.Username == username || u.Email == username);
+                .FirstOrDefaultAsync(u =>
+                    (u.Username == username || u.Email == username)
+                    && !u.IsDeleted);
 
         public async Task<PaginatedResult<User>> GetUsersAsync(int pageNumber, int pageSize, 
             List<Expression<Func<User, bool>>> predicates)
         {
             int totalRecords;
-            IQueryable<User> query = _context.Users;
+            IQueryable<User> query = _context.Users
+                .Include(u => u.Role)
+                .Where(u => !u.IsDeleted);
 
             if (predicates != null && predicates.Count > 0)
             {

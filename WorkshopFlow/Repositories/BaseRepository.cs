@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkshopFlow.Repositories;
 using WorkshopFlow.Data;
+using WorkshopFlow.Models;
+using WorkshopFlow.Repositories;
 
 namespace WorkshopFlow.Repositories
 {
