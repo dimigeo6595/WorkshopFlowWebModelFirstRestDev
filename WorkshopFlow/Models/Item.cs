@@ -27,5 +27,8 @@
         // BOM navigation properties
         public ICollection<BomLine> ProducedBomLines { get; set; } = new HashSet<BomLine>();  // αυτό το item παράγεται από αυτές τις γραμμές
         public ICollection<BomLine> UsedInBomLines { get; set; } = new HashSet<BomLine>();
+
+        //Routing navigation properties
+        public ICollection<RoutingStep> RoutingSteps { get; set; } = new HashSet<RoutingStep>();
     }
 }

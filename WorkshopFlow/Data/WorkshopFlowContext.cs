@@ -17,6 +17,9 @@ public class WorkshopFlowContext : DbContext
     public DbSet<UnitOfMeasure> UnitOfMeasures { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<BomLine> BomLines { get; set; }
+    public DbSet<Workstation> Workstations { get; set; }
+    public DbSet<Machine> Machines { get; set; }
+    public DbSet<RoutingStep> RoutingSteps { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -138,6 +141,65 @@ public class WorkshopFlowContext : DbContext
 
             entity.HasIndex(e => e.ProducedItemId, "IX_BomLines_ProducedItemId");
             entity.HasIndex(e => e.ComponentItemId, "IX_BomLines_ComponentItemId");
+        });
+
+        modelBuilder.Entity<Workstation>(entity =>
+        {
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+
+            entity.HasIndex(e => e.Code, "UQ_Workstations_Code").IsUnique();
+        });
+
+        modelBuilder.Entity<Machine>(entity =>
+        {
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+
+            entity.HasOne(d => d.Workstation)
+                .WithMany(p => p.Machines)
+                .HasForeignKey(d => d.WorkstationId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_Machines_WorkstationId");
+
+            entity.HasIndex(e => e.Code, "UQ_Machines_Code").IsUnique();
+            entity.HasIndex(e => e.WorkstationId, "IX_Machines_WorkstationId");
+        });
+
+        modelBuilder.Entity<RoutingStep>(entity =>
+        {
+            entity.Property(e => e.OperationName).HasMaxLength(100);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+
+            // FK προς Item
+            entity.HasOne(d => d.ProducedItem)
+                .WithMany(p => p.RoutingSteps)
+                .HasForeignKey(d => d.ProducedItemId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_RoutingSteps_ProducedItemId");
+
+            // FK προς Workstation
+            entity.HasOne(d => d.Workstation)
+                .WithMany(p => p.RoutingSteps)
+                .HasForeignKey(d => d.WorkstationId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_RoutingSteps_WorkstationId");
+
+            // FK προς Machine (nullable)
+            entity.HasOne(d => d.Machine)
+                .WithMany(p => p.RoutingSteps)
+                .HasForeignKey(d => d.MachineId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_RoutingSteps_MachineId");
+
+            // Επιχειρησιακός κανόνας: μοναδική sequence ανά item
+            entity.HasIndex(e => new { e.ProducedItemId, e.Sequence },
+                "UQ_RoutingSteps_ProducedItem_Sequence").IsUnique();
+
+            entity.HasIndex(e => e.ProducedItemId, "IX_RoutingSteps_ProducedItemId");
+            entity.HasIndex(e => e.WorkstationId, "IX_RoutingSteps_WorkstationId");
         });
     }
 }
