@@ -137,10 +137,42 @@ namespace WorkshopFlow.Services
                     "Weight calculation is only available for manufactured items (SemiFinished, FinalProduct)");
             }
 
-            // TODO: θα υλοποιηθεί όταν φτιάξουμε το BOM module
+            // Φέρε τις γραμμές BOM
+            var bomLines = await _unitOfWork.BomLineRepository
+                .GetBomByProducedItemIdAsync(id);
+
+            if (!bomLines.Any())
+            {
+                throw new InvalidArgumentException("Item",
+                    $"Item with id {id} has no BOM lines. Cannot calculate weight.");
+            }
+
+            // Επιχειρησιακός κανόνας: όλα τα components πρέπει να έχουν WeightPerUoM
+            var missingWeight = bomLines
+                .Where(b => !b.ComponentItem.WeightPerUoM.HasValue)
+                .Select(b => b.ComponentItem.ItemCode)
+                .ToList();
+
+            if (missingWeight.Any())
+            {
+                throw new InvalidArgumentException("Item",
+                    $"Cannot calculate weight. Missing WeightPerUoM for components: {string.Join(", ", missingWeight)}");
+            }
+
             // weight = Σ (BomLine.Quantity × Component.WeightPerUoM)
-            throw new InvalidArgumentException("Item",
-                "BOM module not yet implemented. Weight calculation unavailable.");
+            var totalWeight = bomLines.Sum(b => b.Quantity * b.ComponentItem.WeightPerUoM!.Value);
+
+            item.Weight = totalWeight;
+            item.ModifiedAt = DateTime.UtcNow;
+
+            await _unitOfWork.ItemRepository.UpdateAsync(item);
+            await _unitOfWork.SaveAsync();
+
+            _logger.LogInformation("Weight calculated for item {Id}: {Weight} kg", id, totalWeight);
+
+            var updatedItem = await _unitOfWork.ItemRepository.GetByIdAsync(id);
+            return _mapper.Map<ItemReadOnlyDTO>(updatedItem);
         }
+
     }
 }
