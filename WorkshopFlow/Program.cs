@@ -34,6 +34,7 @@ namespace WorkshopFlow
 
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IItemService, ItemService>();
+            builder.Services.AddScoped<IBomLineService, BomLineService>();
             builder.Services.AddScoped<IApplicationService, ApplicationService>();
             builder.Services.AddSingleton<IEncryptionUtil, EncryptionUtil>();
 

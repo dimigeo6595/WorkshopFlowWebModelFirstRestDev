@@ -6,6 +6,7 @@ namespace WorkshopFlow.Repositories
     {
         IUserRepository UserRepository { get; }
         IItemRepository ItemRepository { get; }
+        IBomLineRepository BomLineRepository { get; }
 
         Task<bool> SaveAsync();
     }

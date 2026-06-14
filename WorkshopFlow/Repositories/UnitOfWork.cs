@@ -8,7 +8,7 @@ namespace WorkshopFlow.Repositories
         private readonly WorkshopFlowContext _context;
         public IUserRepository UserRepository { get; }
         public IItemRepository ItemRepository { get; }
-        //public IStudentRepository StudentRepository { get; }
+        public IBomLineRepository BomLineRepository { get; }
         //public ICourseRepository CourseRepository { get; }
 
         public UnitOfWork(WorkshopFlowContext context)
@@ -16,7 +16,7 @@ namespace WorkshopFlow.Repositories
             _context = context;
             UserRepository = new UserRepository(context);
             ItemRepository = new ItemRepository(context);
-            //StudentRepository = new StudentRepository(context);
+            BomLineRepository = new BomLineRepository(context);
             //CourseRepository = new CourseRepository(context);
         }
 

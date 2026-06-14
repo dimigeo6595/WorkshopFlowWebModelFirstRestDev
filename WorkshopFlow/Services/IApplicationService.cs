@@ -1,13 +1,12 @@
 ﻿using WorkshopFlow.Services;
 
-namespace WorkshopFlow.Services
+public interface IApplicationService
 {
-    public interface IApplicationService
-    {
-        IUserService UserService { get; }
+    IUserService UserService { get; }
+    
+    // Other services can be added here
+    IItemService ItemService { get; }
+    IBomLineService BomLineService { get; }
 
-
-        // Other services can be added here 
-        IItemService ItemService { get; }
-    }
+    
 }

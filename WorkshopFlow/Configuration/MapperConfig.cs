@@ -38,6 +38,24 @@ namespace WorkshopFlow.Configuration
                     opt => opt.MapFrom(src => src.ItemType!.Value))
                 .ForMember(dest => dest.UnitOfMeasureId,
                     opt => opt.MapFrom(src => src.UnitOfMeasureId!.Value));
+
+            // BomLine mappings
+            CreateMap<BomLine, BomLineReadOnlyDTO>()
+                .ForMember(dest => dest.ComponentItemCode,
+                    opt => opt.MapFrom(src => src.ComponentItem.ItemCode))
+                .ForMember(dest => dest.ComponentItemName,
+                    opt => opt.MapFrom(src => src.ComponentItem.Name))
+                .ForMember(dest => dest.UnitOfMeasureSymbol,
+                    opt => opt.MapFrom(src => src.UnitOfMeasure.Symbol));
+
+            CreateMap<BomLineInsertDTO, BomLine>()
+                .ForMember(dest => dest.ComponentItemId,
+                    opt => opt.MapFrom(src => src.ComponentItemId!.Value))
+                .ForMember(dest => dest.UnitOfMeasureId,
+                    opt => opt.MapFrom(src => src.UnitOfMeasureId!.Value));
+
+            CreateMap<BomLineUpdateDTO, BomLine>();
+
         }
     }
 }
