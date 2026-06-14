@@ -84,7 +84,9 @@ namespace WorkshopFlow.Helpers
             EntityForbiddenException => (StatusCodes.Status403Forbidden, "Forbidden", true),
             EntityNotFoundException => (StatusCodes.Status404NotFound, "Resource not found", true),
             InvalidArgumentException => (StatusCodes.Status400BadRequest, "Invalid argument", true),
+            InsufficientStockException => (StatusCodes.Status409Conflict, "Insufficient stock", true),
             _ => (StatusCodes.Status500InternalServerError, "Internal server error", false)
         };
+
     }
 }

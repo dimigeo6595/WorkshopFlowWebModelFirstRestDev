@@ -105,6 +105,79 @@ namespace WorkshopFlow.Configuration
                 .ForMember(dest => dest.EstimatedMinutes,
                     opt => opt.MapFrom(src => src.EstimatedMinutes!.Value));
 
+            // WorkOrder mappings
+            CreateMap<WorkOrder, WorkOrderReadOnlyDTO>()
+                .ForMember(dest => dest.Status,
+                    opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.ProducedItemCode,
+                    opt => opt.MapFrom(src => src.ProducedItem.ItemCode))
+                .ForMember(dest => dest.ProducedItemName,
+                    opt => opt.MapFrom(src => src.ProducedItem.Name))
+                .ForMember(dest => dest.UnitOfMeasureSymbol,
+                    opt => opt.MapFrom(src => src.ProducedItem.UnitOfMeasure.Symbol))
+                .ForMember(dest => dest.CreatedByUsername,
+                    opt => opt.MapFrom(src => src.CreatedBy.Username))
+                // Υπολογισμός προόδου operations
+                .ForMember(dest => dest.TotalOperations,
+                    opt => opt.MapFrom(src => src.Operations.Count(o => !o.IsDeleted)))
+                .ForMember(dest => dest.CompletedOperations,
+                    opt => opt.MapFrom(src => src.Operations
+                        .Count(o => !o.IsDeleted && o.Status == WorkOrderOperationStatus.Completed)));
+
+            // WorkOrderInsertDTO → WorkOrder — τα υπόλοιπα fields γεμίζουν στο service
+            CreateMap<WorkOrderInsertDTO, WorkOrder>()
+                .ForMember(dest => dest.ProducedItemId,
+                    opt => opt.MapFrom(src => src.ProducedItemId!.Value))
+                .ForMember(dest => dest.Quantity,
+                    opt => opt.MapFrom(src => src.Quantity!.Value));
+
+            // WorkOrderUpdateDTO → WorkOrder — μόνο τα editable fields
+            CreateMap<WorkOrderUpdateDTO, WorkOrder>();
+
+            // WorkOrderOperation mappings
+            CreateMap<WorkOrderOperation, WorkOrderOperationReadOnlyDTO>()
+                .ForMember(dest => dest.Status,
+                    opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.OperationName,
+                    opt => opt.MapFrom(src => src.RoutingStep.OperationName))
+                .ForMember(dest => dest.WorkstationCode,
+                    opt => opt.MapFrom(src => src.RoutingStep.Workstation.Code))
+                .ForMember(dest => dest.WorkstationName,
+                    opt => opt.MapFrom(src => src.RoutingStep.Workstation.Name))
+                .ForMember(dest => dest.MachineCode,
+                    opt => opt.MapFrom(src => src.RoutingStep.Machine != null
+                        ? src.RoutingStep.Machine.Code : null))
+                .ForMember(dest => dest.MachineName,
+                    opt => opt.MapFrom(src => src.RoutingStep.Machine != null
+                        ? src.RoutingStep.Machine.Name : null))
+                .ForMember(dest => dest.AssignedToUsername,
+                    opt => opt.MapFrom(src => src.AssignedTo != null
+                        ? src.AssignedTo.Username : null));
+
+            // InventoryTransaction mappings
+            CreateMap<InventoryTransaction, InventoryTransactionReadOnlyDTO>()
+                .ForMember(dest => dest.TransactionType,
+                    opt => opt.MapFrom(src => src.TransactionType.ToString()))
+                .ForMember(dest => dest.ItemCode,
+                    opt => opt.MapFrom(src => src.Item.ItemCode))
+                .ForMember(dest => dest.ItemName,
+                    opt => opt.MapFrom(src => src.Item.Name))
+                .ForMember(dest => dest.WorkOrderCode,
+                    opt => opt.MapFrom(src => src.WorkOrder != null
+                        ? src.WorkOrder.WorkOrderCode : null))
+                .ForMember(dest => dest.CreatedByUsername,
+                    opt => opt.MapFrom(src => src.CreatedBy.Username));
+
+            CreateMap<InventoryTransactionInsertDTO, InventoryTransaction>()
+                .ForMember(dest => dest.ItemId,
+                    opt => opt.MapFrom(src => src.ItemId!.Value))
+                .ForMember(dest => dest.TransactionType,
+                    opt => opt.MapFrom(src => src.TransactionType!.Value))
+                .ForMember(dest => dest.Quantity,
+                    opt => opt.MapFrom(src => src.Quantity!.Value));
+
+
+
 
 
         }

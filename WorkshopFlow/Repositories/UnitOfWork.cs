@@ -1,4 +1,5 @@
-﻿using WorkshopFlow.Data;
+﻿// UnitOfWork.cs
+using WorkshopFlow.Data;
 
 namespace WorkshopFlow.Repositories
 {
@@ -11,6 +12,9 @@ namespace WorkshopFlow.Repositories
         public IWorkstationRepository WorkstationRepository { get; }
         public IMachineRepository MachineRepository { get; }
         public IRoutingStepRepository RoutingStepRepository { get; }
+        public IWorkOrderRepository WorkOrderRepository { get; }
+        public IWorkOrderOperationRepository WorkOrderOperationRepository { get; }
+        public IInventoryTransactionRepository InventoryTransactionRepository { get; }
 
         public UnitOfWork(WorkshopFlowContext context)
         {
@@ -21,11 +25,14 @@ namespace WorkshopFlow.Repositories
             WorkstationRepository = new WorkstationRepository(context);
             MachineRepository = new MachineRepository(context);
             RoutingStepRepository = new RoutingStepRepository(context);
+            WorkOrderRepository = new WorkOrderRepository(context);
+            WorkOrderOperationRepository = new WorkOrderOperationRepository(context);
+            InventoryTransactionRepository = new InventoryTransactionRepository(context);
         }
 
         public async Task<bool> SaveAsync()
         {
-            return await _context.SaveChangesAsync() > 0; //commit and rollback
+            return await _context.SaveChangesAsync() > 0;   // commit & rollback
         }
     }
 }

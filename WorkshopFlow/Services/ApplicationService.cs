@@ -8,6 +8,8 @@
         public IWorkstationService WorkstationService { get; }
         public IMachineService MachineService { get; }
         public IRoutingStepService RoutingStepService { get; }
+        public IWorkOrderService WorkOrderService { get; }
+        public IInventoryTransactionService InventoryTransactionService { get; }
 
         public ApplicationService(
             IUserService userService,
@@ -15,7 +17,9 @@
             IBomLineService bomLineService,
             IWorkstationService workstationService,
             IMachineService machineService,
-            IRoutingStepService routingStepService)
+            IRoutingStepService routingStepService,
+            IWorkOrderService workOrderService,
+            IInventoryTransactionService inventoryTransactionService)
         {
             UserService = userService;
             ItemService = itemService;
@@ -23,6 +27,8 @@
             WorkstationService = workstationService;
             MachineService = machineService;
             RoutingStepService = routingStepService;
+            WorkOrderService = workOrderService;
+            InventoryTransactionService = inventoryTransactionService;
         }
     }
 }

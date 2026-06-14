@@ -1,5 +1,4 @@
-﻿using WorkshopFlow.Repositories;
-
+﻿// IUnitOfWork.cs
 namespace WorkshopFlow.Repositories
 {
     public interface IUnitOfWork
@@ -10,7 +9,9 @@ namespace WorkshopFlow.Repositories
         IWorkstationRepository WorkstationRepository { get; }
         IMachineRepository MachineRepository { get; }
         IRoutingStepRepository RoutingStepRepository { get; }
-
+        IWorkOrderRepository WorkOrderRepository { get; }
+        IWorkOrderOperationRepository WorkOrderOperationRepository { get; }
+        IInventoryTransactionRepository InventoryTransactionRepository { get; }
 
         Task<bool> SaveAsync();
     }
