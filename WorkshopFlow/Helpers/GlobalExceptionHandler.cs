@@ -83,6 +83,7 @@ namespace WorkshopFlow.Helpers
             EntityNotAuthorizedException => (StatusCodes.Status401Unauthorized, "Unauthorized", true),
             EntityForbiddenException => (StatusCodes.Status403Forbidden, "Forbidden", true),
             EntityNotFoundException => (StatusCodes.Status404NotFound, "Resource not found", true),
+            InvalidArgumentException => (StatusCodes.Status400BadRequest, "Invalid argument", true),
             _ => (StatusCodes.Status500InternalServerError, "Internal server error", false)
         };
     }
