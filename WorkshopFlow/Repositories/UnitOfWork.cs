@@ -1,5 +1,4 @@
-﻿using WorkshopFlow.Repositories;
-using WorkshopFlow.Data;
+﻿using WorkshopFlow.Data;
 
 namespace WorkshopFlow.Repositories
 {
@@ -9,7 +8,9 @@ namespace WorkshopFlow.Repositories
         public IUserRepository UserRepository { get; }
         public IItemRepository ItemRepository { get; }
         public IBomLineRepository BomLineRepository { get; }
-        //public ICourseRepository CourseRepository { get; }
+        public IWorkstationRepository WorkstationRepository { get; }
+        public IMachineRepository MachineRepository { get; }
+        public IRoutingStepRepository RoutingStepRepository { get; }
 
         public UnitOfWork(WorkshopFlowContext context)
         {
@@ -17,12 +18,14 @@ namespace WorkshopFlow.Repositories
             UserRepository = new UserRepository(context);
             ItemRepository = new ItemRepository(context);
             BomLineRepository = new BomLineRepository(context);
-            //CourseRepository = new CourseRepository(context);
+            WorkstationRepository = new WorkstationRepository(context);
+            MachineRepository = new MachineRepository(context);
+            RoutingStepRepository = new RoutingStepRepository(context);
         }
 
         public async Task<bool> SaveAsync()
         {
-            return await _context.SaveChangesAsync() > 0;   // commit & rollback
+            return await _context.SaveChangesAsync() > 0; //commit and rollback
         }
     }
 }

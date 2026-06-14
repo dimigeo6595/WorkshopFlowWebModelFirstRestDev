@@ -56,6 +56,57 @@ namespace WorkshopFlow.Configuration
 
             CreateMap<BomLineUpdateDTO, BomLine>();
 
+            // Workstation mappings
+            CreateMap<Workstation, WorkstationReadOnlyDTO>();
+
+            CreateMap<WorkstationInsertDTO, Workstation>();
+
+            CreateMap<WorkstationUpdateDTO, Workstation>();
+
+            // Machine mappings
+            CreateMap<Machine, MachineReadOnlyDTO>()
+                .ForMember(dest => dest.WorkstationCode,
+                    opt => opt.MapFrom(src => src.Workstation.Code))
+                .ForMember(dest => dest.WorkstationName,
+                    opt => opt.MapFrom(src => src.Workstation.Name));
+
+            CreateMap<MachineInsertDTO, Machine>()
+                .ForMember(dest => dest.WorkstationId,
+                    opt => opt.MapFrom(src => src.WorkstationId!.Value));
+
+            CreateMap<MachineUpdateDTO, Machine>()
+                .ForMember(dest => dest.WorkstationId,
+                    opt => opt.MapFrom(src => src.WorkstationId!.Value));
+
+            // RoutingStep mappings
+            CreateMap<RoutingStep, RoutingStepReadOnlyDTO>()
+                .ForMember(dest => dest.WorkstationCode,
+                    opt => opt.MapFrom(src => src.Workstation.Code))
+                .ForMember(dest => dest.WorkstationName,
+                    opt => opt.MapFrom(src => src.Workstation.Name))
+                .ForMember(dest => dest.MachineCode,
+                    opt => opt.MapFrom(src => src.Machine != null ? src.Machine.Code : null))
+                .ForMember(dest => dest.MachineName,
+                    opt => opt.MapFrom(src => src.Machine != null ? src.Machine.Name : null));
+
+            CreateMap<RoutingStepInsertDTO, RoutingStep>()
+                .ForMember(dest => dest.WorkstationId,
+                    opt => opt.MapFrom(src => src.WorkstationId!.Value))
+                .ForMember(dest => dest.Sequence,
+                    opt => opt.MapFrom(src => src.Sequence!.Value))
+                .ForMember(dest => dest.EstimatedMinutes,
+                    opt => opt.MapFrom(src => src.EstimatedMinutes!.Value));
+
+            CreateMap<RoutingStepUpdateDTO, RoutingStep>()
+                .ForMember(dest => dest.WorkstationId,
+                    opt => opt.MapFrom(src => src.WorkstationId!.Value))
+                .ForMember(dest => dest.Sequence,
+                    opt => opt.MapFrom(src => src.Sequence!.Value))
+                .ForMember(dest => dest.EstimatedMinutes,
+                    opt => opt.MapFrom(src => src.EstimatedMinutes!.Value));
+
+
+
         }
     }
 }
