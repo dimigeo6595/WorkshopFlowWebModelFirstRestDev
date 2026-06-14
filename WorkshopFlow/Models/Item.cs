@@ -30,5 +30,9 @@
 
         //Routing navigation properties
         public ICollection<RoutingStep> RoutingSteps { get; set; } = new HashSet<RoutingStep>();
+        
+
+        public ICollection<WorkOrder> WorkOrders { get; set; } = new HashSet<WorkOrder>();
+        public ICollection<InventoryTransaction> InventoryTransactions { get; set; } = new HashSet<InventoryTransaction>();
     }
 }

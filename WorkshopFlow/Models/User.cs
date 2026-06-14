@@ -20,4 +20,9 @@ public class User : BaseEntity
 
     public Role Role { get; set; } = null!;
 
+    // Navigation properties
+    public ICollection<WorkOrder> CreatedWorkOrders { get; set; } = new HashSet<WorkOrder>();
+    public ICollection<WorkOrderOperation> AssignedOperations { get; set; } = new HashSet<WorkOrderOperation>();
+    public ICollection<InventoryTransaction> InventoryTransactions { get; set; } = new HashSet<InventoryTransaction>();
+
 }

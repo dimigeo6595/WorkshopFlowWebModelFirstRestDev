@@ -17,5 +17,7 @@
         public Item ProducedItem { get; set; } = null!;
         public Workstation Workstation { get; set; } = null!;
         public Machine? Machine { get; set; }
+        public ICollection<WorkOrderOperation> WorkOrderOperations { get; set; } = new HashSet<WorkOrderOperation>();
+
     }
 }

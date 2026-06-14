@@ -20,6 +20,9 @@ public class WorkshopFlowContext : DbContext
     public DbSet<Workstation> Workstations { get; set; }
     public DbSet<Machine> Machines { get; set; }
     public DbSet<RoutingStep> RoutingSteps { get; set; }
+    public DbSet<WorkOrder> WorkOrders { get; set; }
+    public DbSet<WorkOrderOperation> WorkOrderOperations { get; set; }
+    public DbSet<InventoryTransaction> InventoryTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -200,6 +203,99 @@ public class WorkshopFlowContext : DbContext
 
             entity.HasIndex(e => e.ProducedItemId, "IX_RoutingSteps_ProducedItemId");
             entity.HasIndex(e => e.WorkstationId, "IX_RoutingSteps_WorkstationId");
+        });
+
+        modelBuilder.Entity<WorkOrder>(entity =>
+        {
+            entity.Property(e => e.WorkOrderCode).HasMaxLength(50);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+
+            entity.Property(e => e.Status)
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
+            entity.HasOne(d => d.ProducedItem)
+                .WithMany(p => p.WorkOrders)
+                .HasForeignKey(d => d.ProducedItemId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_WorkOrders_ProducedItemId");
+
+            entity.HasOne(d => d.CreatedBy)
+                .WithMany(p => p.CreatedWorkOrders)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_WorkOrders_CreatedByUserId");
+
+            entity.HasIndex(e => e.WorkOrderCode, "UQ_WorkOrders_WorkOrderCode").IsUnique();
+            entity.HasIndex(e => e.ProducedItemId, "IX_WorkOrders_ProducedItemId");
+            entity.HasIndex(e => e.Status, "IX_WorkOrders_Status");
+            entity.HasIndex(e => e.CreatedByUserId, "IX_WorkOrders_CreatedByUserId");
+        });
+
+        modelBuilder.Entity<WorkOrderOperation>(entity =>
+        {
+            entity.Property(e => e.Notes).HasMaxLength(500);
+
+            entity.Property(e => e.Status)
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
+            entity.HasOne(d => d.WorkOrder)
+                .WithMany(p => p.Operations)
+                .HasForeignKey(d => d.WorkOrderId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_WorkOrderOperations_WorkOrderId");
+
+            entity.HasOne(d => d.RoutingStep)
+                .WithMany(p => p.WorkOrderOperations)
+                .HasForeignKey(d => d.RoutingStepId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_WorkOrderOperations_RoutingStepId");
+
+            entity.HasOne(d => d.AssignedTo)
+                .WithMany(p => p.AssignedOperations)
+                .HasForeignKey(d => d.AssignedToUserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_WorkOrderOperations_AssignedToUserId");
+
+            entity.HasIndex(e => e.WorkOrderId, "IX_WorkOrderOperations_WorkOrderId");
+            entity.HasIndex(e => e.RoutingStepId, "IX_WorkOrderOperations_RoutingStepId");
+            entity.HasIndex(e => e.Status, "IX_WorkOrderOperations_Status");
+            entity.HasIndex(e => new { e.WorkOrderId, e.Sequence },
+                "UQ_WorkOrderOperations_WorkOrder_Sequence").IsUnique();
+        });
+
+        modelBuilder.Entity<InventoryTransaction>(entity =>
+        {
+            entity.Property(e => e.Quantity).HasPrecision(18, 4);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+
+            entity.Property(e => e.TransactionType)
+                .HasConversion<string>()
+                .HasMaxLength(20);
+
+            entity.HasOne(d => d.Item)
+                .WithMany(p => p.InventoryTransactions)
+                .HasForeignKey(d => d.ItemId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_InventoryTransactions_ItemId");
+
+            entity.HasOne(d => d.WorkOrder)
+                .WithMany(p => p.InventoryTransactions)
+                .HasForeignKey(d => d.WorkOrderId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_InventoryTransactions_WorkOrderId");
+
+            entity.HasOne(d => d.CreatedBy)
+                .WithMany(p => p.InventoryTransactions)
+                .HasForeignKey(d => d.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_InventoryTransactions_CreatedByUserId");
+
+            entity.HasIndex(e => e.ItemId, "IX_InventoryTransactions_ItemId");
+            entity.HasIndex(e => e.WorkOrderId, "IX_InventoryTransactions_WorkOrderId");
+            entity.HasIndex(e => e.TransactionType, "IX_InventoryTransactions_TransactionType");
+            entity.HasIndex(e => e.CreatedByUserId, "IX_InventoryTransactions_CreatedByUserId");
         });
     }
 }
