@@ -8,6 +8,7 @@ namespace WorkshopFlow.Repositories
     {
         Task<Item?> GetItemByCodeAsync(string itemCode);
         Task<PaginatedResult<Item>> GetItemsAsync(int pageNumber, int pageSize,
-            List<Expression<Func<Item, bool>>> predicates);
+            List<Expression<Func<Item, bool>>> predicates,
+            string? sortBy = null, bool sortDescending = false);
     }
 }

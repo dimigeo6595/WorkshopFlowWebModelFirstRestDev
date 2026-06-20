@@ -6,5 +6,7 @@ namespace WorkshopFlow.Core.Filters
     {
         public string? Name { get; set; }
         public ItemType? ItemType { get; set; }
+        public string? SortBy { get; set; }
+        public bool SortDescending { get; set; } = false;
     }
 }

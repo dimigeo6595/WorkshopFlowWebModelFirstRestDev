@@ -25,7 +25,8 @@ namespace WorkshopFlow.Repositories
                 .FirstOrDefaultAsync(i => i.ItemCode == itemCode && !i.IsDeleted);
 
         public async Task<PaginatedResult<Item>> GetItemsAsync(int pageNumber, int pageSize,
-            List<Expression<Func<Item, bool>>> predicates)
+    List<Expression<Func<Item, bool>>> predicates,
+    string? sortBy = null, bool sortDescending = false)
         {
             IQueryable<Item> query = _context.Items
                 .Include(i => i.UnitOfMeasure)
@@ -43,8 +44,15 @@ namespace WorkshopFlow.Repositories
             int totalRecords = await query.CountAsync();
             int skip = (pageNumber - 1) * pageSize;
 
+            query = (sortBy?.ToLower()) switch
+            {
+                "name" => sortDescending ? query.OrderByDescending(i => i.Name) : query.OrderBy(i => i.Name),
+                "stockquantity" => sortDescending ? query.OrderByDescending(i => i.StockQuantity) : query.OrderBy(i => i.StockQuantity),
+                "itemtype" => sortDescending ? query.OrderByDescending(i => i.ItemType) : query.OrderBy(i => i.ItemType),
+                _ => sortDescending ? query.OrderByDescending(i => i.ItemCode) : query.OrderBy(i => i.ItemCode),
+            };
+
             var data = await query
-                .OrderBy(i => i.ItemCode)
                 .Skip(skip)
                 .Take(pageSize)
                 .ToListAsync();

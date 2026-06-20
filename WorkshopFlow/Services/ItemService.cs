@@ -56,7 +56,7 @@ namespace WorkshopFlow.Services
             }
 
             var result = await _unitOfWork.ItemRepository.GetItemsAsync(
-                pageNumber, pageSize, predicates);
+                pageNumber, pageSize, predicates, filters.SortBy, filters.SortDescending);
 
             var dtoResult = new PaginatedResult<ItemReadOnlyDTO>()
             {
