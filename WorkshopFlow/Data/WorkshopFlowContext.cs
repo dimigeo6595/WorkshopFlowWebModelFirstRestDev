@@ -140,7 +140,9 @@ public class WorkshopFlowContext : DbContext
 
             // Επιχειρησιακός κανόνας: ένα component εμφανίζεται μία φορά ανά BOM
             entity.HasIndex(e => new { e.ProducedItemId, e.ComponentItemId },
-                "UQ_BomLines_ProducedItem_ComponentItem").IsUnique();
+                    "UQ_BomLines_ProducedItem_ComponentItem")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
 
             entity.HasIndex(e => e.ProducedItemId, "IX_BomLines_ProducedItemId");
             entity.HasIndex(e => e.ComponentItemId, "IX_BomLines_ComponentItemId");
@@ -201,7 +203,10 @@ public class WorkshopFlowContext : DbContext
             entity.HasIndex(e => new { e.ProducedItemId, e.Sequence },
                 "UQ_RoutingSteps_ProducedItem_Sequence").IsUnique();
 
-            entity.HasIndex(e => e.ProducedItemId, "IX_RoutingSteps_ProducedItemId");
+            entity.HasIndex(e => new { e.ProducedItemId, e.Sequence },
+                    "UQ_RoutingSteps_ProducedItem_Sequence")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
             entity.HasIndex(e => e.WorkstationId, "IX_RoutingSteps_WorkstationId");
         });
 
