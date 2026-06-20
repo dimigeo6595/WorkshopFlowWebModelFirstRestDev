@@ -11,6 +11,7 @@
         public decimal StockQuantity { get; set; }
         public decimal? WeightPerUoM { get; set; }    // optional
         public decimal? Weight { get; set; }           // optional
+        public int UnitOfMeasureId { get; set; }
         public string UnitOfMeasureSymbol { get; set; } = null!;
         public string? WeightUoMSymbol { get; set; }  // optional
     }
