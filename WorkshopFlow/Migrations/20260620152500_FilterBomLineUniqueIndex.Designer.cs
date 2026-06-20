@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkshopFlow.Data;
 
@@ -11,9 +12,11 @@ using WorkshopFlow.Data;
 namespace WorkshopFlow.Migrations
 {
     [DbContext(typeof(WorkshopFlowContext))]
-    partial class WorkshopFlowContextModelSnapshot : ModelSnapshot
+    [Migration("20260620152500_FilterBomLineUniqueIndex")]
+    partial class FilterBomLineUniqueIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,11 +362,12 @@ namespace WorkshopFlow.Migrations
 
                     b.HasIndex("MachineId");
 
+                    b.HasIndex(new[] { "ProducedItemId" }, "IX_RoutingSteps_ProducedItemId");
+
                     b.HasIndex(new[] { "WorkstationId" }, "IX_RoutingSteps_WorkstationId");
 
                     b.HasIndex(new[] { "ProducedItemId", "Sequence" }, "UQ_RoutingSteps_ProducedItem_Sequence")
-                        .IsUnique()
-                        .HasFilter("[IsDeleted] = 0");
+                        .IsUnique();
 
                     b.ToTable("RoutingSteps");
                 });
