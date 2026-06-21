@@ -10,7 +10,7 @@ namespace WorkshopFlow.DTO
         public int? ItemId { get; set; }
 
         [Required(ErrorMessage = "The {0} field is required.")]
-        [Range(0.0001, double.MaxValue, ErrorMessage = "Quantity must be greater than 0.")]
+        [Range(-1000000, 1000000, ErrorMessage = "Quantity must be a non-zero number within range.")]
         public decimal? Quantity { get; set; }
 
         // Επιχειρησιακός κανόνας: μόνο Purchase και Adjustment επιτρέπονται manual
