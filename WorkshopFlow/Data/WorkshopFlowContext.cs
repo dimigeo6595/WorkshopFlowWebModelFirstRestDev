@@ -62,9 +62,13 @@ public class WorkshopFlowContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Users_RoleId");
 
-            entity.HasIndex(e => e.Email, "IX_Users_Email").IsUnique();
+            entity.HasIndex(e => e.Email, "IX_Users_Email")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
             entity.HasIndex(e => e.RoleId, "IX_Users_RoleId");
-            entity.HasIndex(e => e.Username, "IX_Users_Username").IsUnique();
+            entity.HasIndex(e => e.Username, "IX_Users_Username")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
         });
 
         modelBuilder.Entity<UnitOfMeasure>(entity =>
@@ -107,7 +111,9 @@ public class WorkshopFlowContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Items_WeightUoMId");
 
-            entity.HasIndex(e => e.ItemCode, "UQ_Items_ItemCode").IsUnique();
+            entity.HasIndex(e => e.ItemCode, "UQ_Items_ItemCode")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
             entity.HasIndex(e => e.UnitOfMeasureId, "IX_Items_UnitOfMeasureId");
             entity.HasIndex(e => e.ItemType, "IX_Items_ItemType");
         });
@@ -154,7 +160,9 @@ public class WorkshopFlowContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Notes).HasMaxLength(500);
 
-            entity.HasIndex(e => e.Code, "UQ_Workstations_Code").IsUnique();
+            entity.HasIndex(e => e.Code, "UQ_Workstations_Code")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
         });
 
         modelBuilder.Entity<Machine>(entity =>
@@ -169,7 +177,9 @@ public class WorkshopFlowContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_Machines_WorkstationId");
 
-            entity.HasIndex(e => e.Code, "UQ_Machines_Code").IsUnique();
+            entity.HasIndex(e => e.Code, "UQ_Machines_Code")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
             entity.HasIndex(e => e.WorkstationId, "IX_Machines_WorkstationId");
         });
 
@@ -231,7 +241,9 @@ public class WorkshopFlowContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_WorkOrders_CreatedByUserId");
 
-            entity.HasIndex(e => e.WorkOrderCode, "UQ_WorkOrders_WorkOrderCode").IsUnique();
+            entity.HasIndex(e => e.WorkOrderCode, "UQ_WorkOrders_WorkOrderCode")
+                  .IsUnique()
+                  .HasFilter("[IsDeleted] = 0");
             entity.HasIndex(e => e.ProducedItemId, "IX_WorkOrders_ProducedItemId");
             entity.HasIndex(e => e.Status, "IX_WorkOrders_Status");
             entity.HasIndex(e => e.CreatedByUserId, "IX_WorkOrders_CreatedByUserId");
@@ -267,7 +279,9 @@ public class WorkshopFlowContext : DbContext
             entity.HasIndex(e => e.RoutingStepId, "IX_WorkOrderOperations_RoutingStepId");
             entity.HasIndex(e => e.Status, "IX_WorkOrderOperations_Status");
             entity.HasIndex(e => new { e.WorkOrderId, e.Sequence },
-                "UQ_WorkOrderOperations_WorkOrder_Sequence").IsUnique();
+                "UQ_WorkOrderOperations_WorkOrder_Sequence")
+              .IsUnique()
+              .HasFilter("[IsDeleted] = 0");
         });
 
         modelBuilder.Entity<InventoryTransaction>(entity =>
