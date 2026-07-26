@@ -78,9 +78,21 @@ namespace WorkshopFlow
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowClient", policy =>
-                policy.WithOrigins(builder.Configuration["Cors:Origin"]!)
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
+                {
+                    var origin = builder.Configuration["Cors:Origin"];
+                    if (!string.IsNullOrEmpty(origin))
+                    {
+                        policy.WithOrigins(origin)
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    }
+                    else
+                    {
+                        policy.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    }
+                });
             });
 
             builder.Services.AddControllers().AddJsonOptions( options =>
