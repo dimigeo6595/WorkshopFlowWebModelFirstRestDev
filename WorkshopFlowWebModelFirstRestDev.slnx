@@ -8,5 +8,6 @@
     <File Path="docker-compose.yml" />
     <File Path="Dockerfile" />
   </Folder>
+  <Project Path="WorkshopFlow.Tests/WorkshopFlow.Tests.csproj" />
   <Project Path="WorkshopFlow/WorkshopFlow.csproj" />
 </Solution>
