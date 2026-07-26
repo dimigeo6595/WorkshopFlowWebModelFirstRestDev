@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public string WorkOrderCode { get; set; } = null!;
         public string Status { get; set; } = null!;
+        public int ProducedItemId { get; set; }
         public string ProducedItemCode { get; set; } = null!;
         public string ProducedItemName { get; set; } = null!;
         public int Quantity { get; set; }

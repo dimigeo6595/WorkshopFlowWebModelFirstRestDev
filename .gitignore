@@ -7,3 +7,6 @@
 # Build output
 **/bin/
 **/obj/
+
+# Rider/IntelliJ IDE
+.idea/
